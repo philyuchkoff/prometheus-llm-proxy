@@ -100,7 +100,7 @@ func (p *ProxyHandler) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	url := fmt.Sprintf(
-		"%s/api/v1/query_range?query=%s&start=%s&end=%s&step=15", p.PromBaseUrl, queryForPrometheus,
+		"%s/api/v1/query_range?query=%s&start=%s&end=%s&step=15", p.PromBaseUrl, url.QueryEscape(queryForPrometheus),
 		queryParams.Get("start"), queryParams.Get("end"),
 	)
 
