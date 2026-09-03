@@ -39,6 +39,8 @@ func (p *ProxyHandler) ValidateQuery(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Err(err).Msg("Error while reading body")
+		http.Error(w, "Error while reading request body", http.StatusInternalServerError)
+		return
 	}
 
 	err = json.Unmarshal(body, &req)
