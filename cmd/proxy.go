@@ -8,7 +8,6 @@ import (
 	"net/url"
 	"regexp"
 
-	"github.com/WoodProgrammer/prometheus-llm-proxy/db"
 	"github.com/rs/zerolog/log"
 )
 
@@ -20,7 +19,7 @@ type Proxy interface {
 type ProxyHandler struct {
 	PromBaseUrl string
 	LLMEndpoint string
-	DBHandler   db.QueryValidationHandler
+	DBHandler   QueryValidationHandler
 	Requester   RequestHandler
 }
 
@@ -80,7 +79,7 @@ func (p *ProxyHandler) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 	queryParams := parsedURL.Query()
 	query := ParseQuery(queryParams.Get("query"))
 
-	_hash := db.GenerateHash(query)
+	_hash := GenerateHash(query)
 	val, ok := p.DBHandler.GetQuery(_hash)
 	if !ok || !val.Status {
 

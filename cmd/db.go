@@ -1,4 +1,4 @@
-package db
+package cmd
 
 import (
 	"fmt"
@@ -17,11 +17,6 @@ func GenerateHash(s string) string {
 	h.Write([]byte(s))
 	str_hash := fmt.Sprint(h.Sum32())
 	return str_hash
-}
-
-type QueryValidationInterface interface {
-	ValidateQuery(status bool, hash string)
-	GetAllQueries() map[string]QueryValidation
 }
 
 type QueryValidationHandler struct {

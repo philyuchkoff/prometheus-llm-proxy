@@ -7,15 +7,14 @@ import (
 	"os"
 	"time"
 
-	cmd "github.com/WoodProgrammer/prometheus-llm-proxy/cmd"
-	db "github.com/WoodProgrammer/prometheus-llm-proxy/db"
+	"prometheus-llm-proxy/cmd"
 
 	"github.com/rs/zerolog/log"
 )
 
 func NewProxyHandler() (*cmd.ProxyHandler, error) {
 
-	_query_map := map[string]db.QueryValidation{}
+	_query_map := map[string]cmd.QueryValidation{}
 	promUrl := os.Getenv("PROMETHEUS_URL")
 	if len(promUrl) == 0 {
 		return nil, errors.New("PROMETHEUS_URL environment variable is required")
@@ -27,7 +26,7 @@ func NewProxyHandler() (*cmd.ProxyHandler, error) {
 	return &cmd.ProxyHandler{
 		PromBaseUrl: promUrl,
 		LLMEndpoint: llmEndpoint,
-		DBHandler: db.QueryValidationHandler{
+		DBHandler: cmd.QueryValidationHandler{
 			QueryValidationMap: _query_map,
 		},
 		Requester: cmd.RequestHandler{
