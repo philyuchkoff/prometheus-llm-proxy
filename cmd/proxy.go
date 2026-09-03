@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"net/url"
 	"regexp"
@@ -37,7 +36,7 @@ func ParseQuery(query string) string {
 func (p *ProxyHandler) ValidateQuery(w http.ResponseWriter, r *http.Request) {
 	req := QueryValidationRequest{}
 
-	body, err := ioutil.ReadAll(r.Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
 		log.Err(err).Msg("Error while reading body")
 	}
