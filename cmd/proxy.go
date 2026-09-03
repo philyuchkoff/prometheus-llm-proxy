@@ -87,6 +87,10 @@ func (p *ProxyHandler) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			log.Err(err).Msg("Error while calling LLM source")
 		}
+		if queryForPrometheus == "" {
+			http.Error(w, "Empty query returned by LLM", http.StatusInternalServerError)
+			return
+		}
 		log.Debug().Msgf("LLM Call required!")
 		p.DBHandler.SetQueries(query, queryForPrometheus, _hash, false)
 
