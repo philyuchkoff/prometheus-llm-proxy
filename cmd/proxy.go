@@ -128,8 +128,7 @@ func (p *ProxyHandler) PrometheusProxyHandler(w http.ResponseWriter, r *http.Req
 
 	req.Header = r.Header.Clone()
 
-	client := &http.Client{}
-	resp, err := client.Do(req)
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		http.Error(w, "Failed to reach Prometheus", http.StatusBadGateway)
 		return

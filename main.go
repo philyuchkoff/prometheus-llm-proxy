@@ -30,6 +30,9 @@ func NewProxyHandler() (*cmd.ProxyHandler, error) {
 			QueryValidationMap: _query_map,
 		},
 		Requester: cmd.RequestHandler{
+			HTTPClient: &http.Client{
+				Timeout: 10 * time.Second,
+			},
 			LastPrometheusCall: time.Now(),
 		},
 	}, nil

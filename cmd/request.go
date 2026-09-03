@@ -15,11 +15,7 @@ import (
 )
 
 func (p *RequestHandler) FetchMetrics(url string) ([]byte, error) {
-	client := &http.Client{
-		Timeout: 10 * time.Second,
-	}
-
-	resp, err := client.Get(url)
+	resp, err := p.HTTPClient.Get(url)
 	if err != nil {
 		return nil, err
 	}
@@ -38,15 +34,14 @@ func (p *RequestHandler) FetchAvailableMetrics(prometheusAddress string) ([]stri
 	if err != nil {
 		return nil, err
 	}
-	client := &http.Client{Timeout: 10 * time.Second}
 	req.Header.Set("Accept", "application/json")
-	resp, err := client.Do(req)
+	resp, err := p.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}
 	defer resp.Body.Close()
 
-	// 304 => değişiklik yok
+	// 304 => no changes
 	if resp.StatusCode == http.StatusNotModified {
 		return nil, err
 	}
@@ -73,7 +68,6 @@ func (p *RequestHandler) LLMConverter(naturalQuery string, llmEndpoint string) (
 	var isOpenAI bool
 	var llmResponse string
 	var openAIAPIModel string
-	client := &http.Client{Timeout: 10 * time.Second}
 	prompt := fmt.Sprintf(`
 Generate a single valid PromQL expression from the request below:
 Just return the query, no markdown, no quotes, no explanation
@@ -119,7 +113,7 @@ Rules:
 		}
 		req.Header.Set("Content-Type", "application/json")
 
-		resp, err := client.Do(req)
+		resp, err := p.HTTPClient.Do(req)
 		if err != nil {
 			return "", err
 		}
@@ -153,7 +147,7 @@ Rules:
 		req.Header.Set("Authorization", "Bearer "+openAIAPIKey)
 		req.Header.Set("Content-Type", "application/json")
 
-		res, err := client.Do(req)
+		res, err := p.HTTPClient.Do(req)
 		if err != nil {
 			return "", fmt.Errorf("LLM API call failed: %w", err)
 		}
