@@ -147,11 +147,11 @@ Rules:
 		}
 
 		req, err = http.NewRequest("POST", llmEndpoint, bytes.NewBuffer(payloadBytes))
-		req.Header.Set("Authorization", "Bearer "+openAIAPIKey)
-		req.Header.Set("Content-Type", "application/json")
 		if err != nil {
 			return "", err
 		}
+		req.Header.Set("Authorization", "Bearer "+openAIAPIKey)
+		req.Header.Set("Content-Type", "application/json")
 
 		res, err := client.Do(req)
 		if err != nil {
