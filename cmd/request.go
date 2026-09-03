@@ -63,6 +63,28 @@ func (p *RequestHandler) FetchAvailableMetrics(prometheusAddress string) ([]stri
 	return payload.Data, nil
 }
 
+func (p *RequestHandler) FetchAvailableMetricsCached(prometheusAddress string) ([]string, error) {
+	p.mu.Lock()
+	if p.metricsCacheAt.After(time.Now().Add(-p.AvailableMetricsCacheTTL)) {
+		metrics := p.metricsCache
+		p.mu.Unlock()
+		return metrics, nil
+	}
+	p.mu.Unlock()
+
+	metrics, err := p.FetchAvailableMetrics(prometheusAddress)
+	if err != nil {
+		return nil, err
+	}
+
+	p.mu.Lock()
+	p.metricsCache = metrics
+	p.metricsCacheAt = time.Now()
+	p.mu.Unlock()
+
+	return metrics, nil
+}
+
 func (p *RequestHandler) LLMConverter(naturalQuery string, llmEndpoint string) (string, error) {
 	var req *http.Request
 	var isOpenAI bool

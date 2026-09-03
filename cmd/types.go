@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"net/http"
+	"sync"
 	"time"
 )
 
@@ -17,7 +18,12 @@ type Request interface {
 type RequestHandler struct {
 	HTTPClient                *http.Client
 	PrometheusAvailableMetrics PrometheusAvailableMetricReponse
+	AvailableMetricsCacheTTL  time.Duration
 	LastPrometheusCall         time.Time
+
+	mu sync.Mutex
+	metricsCache    []string
+	metricsCacheAt  time.Time
 }
 
 type QueryValidationRequest struct {
