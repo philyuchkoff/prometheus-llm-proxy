@@ -50,14 +50,13 @@ func (p *ProxyHandler) ValidateQuery(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	query, ok := p.DBHandler.QueryValidationMap[req.Hash]
-
+	query, ok := p.DBHandler.GetQuery(req.Hash)
 	if !ok {
 		http.NotFound(w, r)
 		return
 	}
 	query.Status = req.Status
-	p.DBHandler.QueryValidationMap[req.Hash] = query
+	p.DBHandler.SetQueries(query.Prompt, query.Output, req.Hash, req.Status)
 
 	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
 	w.Write([]byte("OK"))
@@ -82,7 +81,7 @@ func (p *ProxyHandler) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 	query := ParseQuery(queryParams.Get("query"))
 
 	_hash := db.GenerateHash(query)
-	val, ok := p.DBHandler.QueryValidationMap[_hash]
+	val, ok := p.DBHandler.GetQuery(_hash)
 	if !ok || !val.Status {
 
 		queryForPrometheus, err = p.Requester.LLMConverter(query, p.LLMEndpoint)
