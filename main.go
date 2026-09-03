@@ -19,8 +19,8 @@ func NewProxyHandler() *cmd.ProxyHandler {
 		panic("Please set prometheus url as environment variable")
 	}
 	llmEndpoint := os.Getenv("LLM_ENDPOINT")
-	if len(promUrl) == 0 {
-		panic("Please set ollama address url as environment variable")
+	if len(llmEndpoint) == 0 {
+		panic("Please set LLM endpoint as environment variable")
 	}
 	return &cmd.ProxyHandler{
 		PromBaseUrl: promUrl,
