@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"fmt"
 	"net/http"
 	"os"
 	"time"
@@ -50,8 +51,13 @@ func main() {
 	http.HandleFunc("/api/v1/validate_query", proxy.ValidateQuery)
 	http.HandleFunc("/api/v1/get_all_queries", proxy.GetAllQueries)
 
-	log.Info().Msg("Starting server on :8000")
-	if err := http.ListenAndServe(":8000", nil); err != nil {
+	port := os.Getenv("PORT")
+	if len(port) == 0 {
+		port = "8000"
+	}
+
+	log.Info().Msgf("Starting server on :%s", port)
+	if err := http.ListenAndServe(fmt.Sprintf(":%s", port), nil); err != nil {
 		log.Err(err).Msg("Error starting server:")
 	}
 }
