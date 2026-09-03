@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"os"
 	"time"
@@ -11,16 +12,16 @@ import (
 	"github.com/rs/zerolog/log"
 )
 
-func NewProxyHandler() *cmd.ProxyHandler {
+func NewProxyHandler() (*cmd.ProxyHandler, error) {
 
 	_query_map := map[string]db.QueryValidation{}
 	promUrl := os.Getenv("PROMETHEUS_URL")
 	if len(promUrl) == 0 {
-		panic("Please set prometheus url as environment variable")
+		return nil, errors.New("PROMETHEUS_URL environment variable is required")
 	}
 	llmEndpoint := os.Getenv("LLM_ENDPOINT")
 	if len(llmEndpoint) == 0 {
-		panic("Please set LLM endpoint as environment variable")
+		return nil, errors.New("LLM_ENDPOINT environment variable is required")
 	}
 	return &cmd.ProxyHandler{
 		PromBaseUrl: promUrl,
@@ -31,12 +32,15 @@ func NewProxyHandler() *cmd.ProxyHandler {
 		Requester: cmd.RequestHandler{
 			LastPrometheusCall: time.Now(),
 		},
-	}
+	}, nil
 }
 
 func main() {
 
-	proxy := NewProxyHandler()
+	proxy, err := NewProxyHandler()
+	if err != nil {
+		log.Fatal().Err(err).Msg("Failed to initialize proxy handler")
+	}
 	http.HandleFunc("/api/v1/query_range", proxy.MetricsHandler)
 	http.HandleFunc("/api/v1/label/__name__/values", proxy.PrometheusProxyHandler)
 	http.HandleFunc("/api/v1/labels", proxy.PrometheusProxyHandler)

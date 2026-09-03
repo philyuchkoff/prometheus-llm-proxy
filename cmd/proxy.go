@@ -73,7 +73,8 @@ func (p *ProxyHandler) MetricsHandler(w http.ResponseWriter, r *http.Request) {
 	var queryForPrometheus string
 	parsedURL, err := url.Parse(r.URL.String())
 	if err != nil {
-		panic(err)
+		http.Error(w, "Invalid request URL", http.StatusBadRequest)
+		return
 	}
 
 	queryParams := parsedURL.Query()

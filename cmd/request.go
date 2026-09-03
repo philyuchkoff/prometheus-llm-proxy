@@ -156,18 +156,18 @@ Rules:
 
 		res, err := client.Do(req)
 		if err != nil {
-			panic(err)
+			return "", fmt.Errorf("LLM API call failed: %w", err)
 		}
 		defer res.Body.Close()
 
 		if res.StatusCode >= 300 {
 			blob, _ := io.ReadAll(res.Body)
-			panic(fmt.Errorf("API hata: %s\n%s", res.Status, string(blob)))
+			return "", fmt.Errorf("LLM API error: %s\n%s", res.Status, string(blob))
 		}
 
 		var r Response
 		if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
-			panic(fmt.Errorf("JSON decode hata: %w", err))
+			return "", fmt.Errorf("LLM JSON decode error: %w", err)
 		}
 		var out string
 		for _, o := range r.Output {
