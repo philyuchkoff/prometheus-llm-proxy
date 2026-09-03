@@ -46,7 +46,7 @@ func main() {
 	http.HandleFunc("/api/v1/validate_query", proxy.ValidateQuery)
 	http.HandleFunc("/api/v1/get_all_queries", proxy.GetAllQueries)
 
-	log.Info().Msg("Starting server on :8080")
+	log.Info().Msg("Starting server on :8000")
 	if err := http.ListenAndServe(":8000", nil); err != nil {
 		log.Err(err).Msg("Error starting server:")
 	}
