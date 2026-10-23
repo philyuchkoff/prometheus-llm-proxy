@@ -2,6 +2,8 @@ module prometheus-llm-proxy
 
 go 1.24.4
 
+toolchain go1.27.3
+
 require github.com/rs/zerolog v1.34.0
 
 require (
